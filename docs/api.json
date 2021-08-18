@@ -1,0 +1,87 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io/](http//swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key special-key to test the authorization filters.",
+    "version": "1.0.5",
+    "title": "Health Documentation Get Nest.js",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "tags": [
+    {
+      "name": "Health Endpoint",
+      "description": "This is an example about how to use Docs Open Api proving a Health check service "
+    }
+  ],
+  "basePath": "/",
+  "schemes": ["https", "http"],
+  "paths": {
+    "/_health/": {
+      "get": {
+        "tags": [""],
+        "summary": "Get a verification of the health service ",
+        "description": "",
+        "operationId": "getHealth",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "_health",
+            "in": "",
+            "description": "Health check service",
+            "required": true,
+            "type": "",
+            "maximum": "",
+            "minimum": "",
+            "format": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/HealthGet"
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "HealthGet": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "type": "boolean",
+          "example": "true"
+        },
+        "uptime": {
+          "type": "integer",
+          "example": 237.3771718
+        },
+        "serverId": {
+          "type": "string",
+          "example": "LAPTOP-S10RM308 14548"
+        },
+        "hostname": {
+          "type": "string",
+          "example": "LAPTOP-Q155"
+        },
+        "startTime": {
+          "type": "string",
+          "example": "2021-08-12T17:34:17.713Z"
+        }
+      }
+    }
+  }
+}
