@@ -14,7 +14,6 @@ export class PetsController {
       'https://bsl1.herokuapp.com/pet/categories',
     );
     const category: IPetCategory = dataCategory.data;
-
     const petConjuntion = pet.map((pets) => {
       delete pets.id;
       pets.category = category.categories.find(
