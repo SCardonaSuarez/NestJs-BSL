@@ -34,28 +34,27 @@ const schema = Joi.object({
 @Controller('cities')
 export class CitiesController {
   @Get()
-  get(@Res() response: Response): Response {
-    const name = '';
-    const lastName = '';
-    return response.status(HttpStatus.OK).send({
-      name,
-      lastName,
-    });
+  public get(@Res() response: Response) {
+    return response.status(HttpStatus.OK).send({});
   }
 
-  @Post('schema')
-  public postCities(@Body() body: any, @Res() response: Response) {
+  @Post()
+  public post(@Body() body: any, @Res() response: Response) {
     try {
-      Logger.log(body);
-      if (!schema.validate(body)) {
+      const result = schema.validate(body);
+      Logger.log({ result });
+      if (result.error) {
         return response.status(HttpStatus.BAD_REQUEST).send({
           error: 'Invalid request body',
         });
       }
-    } catch (error) {
-      return response
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send({ error: 'Server error' });
+      const newUser = {
+        ...body,
+        creationDate: new Date().getTime(),
+        verifiedEmail: false,
+      };
+      return response.status(HttpStatus.CREATED).send({ newUser });
+    } finally {
     }
   }
 }
