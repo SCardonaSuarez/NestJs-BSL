@@ -11,6 +11,7 @@ import { Response } from 'express';
 import * as Joi from 'joi';
 import Knex from 'knex';
 import { NestjsKnexService } from 'nestjs-knexjs';
+import { v4 as uuidv4 } from 'uuid';
 
 const schema = Joi.object({
   name: Joi.string().required(),
@@ -50,7 +51,7 @@ export class CitiesController {
   }
 
   @Post()
-  public post(@Body() body: any, @Res() response: Response) {
+  public async post(@Body() body: any, @Res() response: Response) {
     try {
       const result = schema.validate(body);
       Logger.log({ result });
@@ -59,13 +60,22 @@ export class CitiesController {
           error: 'Invalid request body',
         });
       }
-      const newUser = {
-        ...body,
-        creationDate: new Date().getTime(),
-        verifiedEmail: false,
-      };
-      return response.status(HttpStatus.CREATED).send({ newUser });
-    } finally {
+      const id = uuidv4();
+      const table = await this.knex(' data ').insert({
+        id,
+        name: body.name,
+        lastName: body.lastName,
+        email: body.email,
+        password: body.password,
+        gender: body.gender,
+        birthDate: body.birthDate,
+      });
+      return response.status(HttpStatus.CREATED).send({ table });
+    } catch (ex) {
+      Logger.error(ex.message);
+      return response
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .send({ error: 'Server error' });
     }
   }
 }
