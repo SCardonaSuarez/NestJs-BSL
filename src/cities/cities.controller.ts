@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import * as Joi from 'joi';
+import Knex from 'knex';
+import { NestjsKnexService } from 'nestjs-knexjs';
 
 const schema = Joi.object({
   name: Joi.string().required(),
@@ -23,7 +25,9 @@ const schema = Joi.object({
     .required(),
 
   password: Joi.string()
-    .pattern(new RegExp('^([a-zA-Z0-9!@#$%^&*]{6,16}$)'))
+    .pattern(
+      new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'),
+    )
     .required(),
 
   gender: Joi.string().valid('male', 'female'),
@@ -33,9 +37,16 @@ const schema = Joi.object({
 
 @Controller('cities')
 export class CitiesController {
+  private readonly knex: Knex = null;
+
+  constructor(private nestjsKnexService: NestjsKnexService) {
+    this.knex = this.nestjsKnexService.getKnexConnection();
+  }
   @Get()
-  public get(@Res() response: Response) {
-    return response.status(HttpStatus.OK).send({});
+  public async get(@Res() response: Response) {
+    const data = await this.knex('post').select('*');
+    Logger.log({ data });
+    return response.status(HttpStatus.OK).send({ data });
   }
 
   @Post()
