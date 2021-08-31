@@ -54,14 +54,13 @@ export class CitiesController {
   public async post(@Body() body: any, @Res() response: Response) {
     try {
       const result = schema.validate(body);
-      Logger.log({ result });
       if (result.error) {
         return response.status(HttpStatus.BAD_REQUEST).send({
-          error: 'Invalid request body',
+          error: result.error,
         });
       }
       const id = uuidv4();
-      const table = await this.knex(' data ').insert({
+      const table = await this.knex(' post ').insert({
         id,
         name: body.name,
         lastName: body.lastName,
@@ -70,6 +69,7 @@ export class CitiesController {
         gender: body.gender,
         birthDate: body.birthDate,
       });
+      Logger.log(table);
       return response.status(HttpStatus.CREATED).send({ table });
     } catch (ex) {
       Logger.error(ex.message);
