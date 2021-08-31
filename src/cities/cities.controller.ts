@@ -12,6 +12,7 @@ import * as Joi from 'joi';
 import Knex from 'knex';
 import { NestjsKnexService } from 'nestjs-knexjs';
 import { v4 as uuidv4 } from 'uuid';
+import * as bycript from 'bcrypt';
 
 const schema = Joi.object({
   name: Joi.string().required(),
@@ -59,23 +60,27 @@ export class CitiesController {
           error: result.error,
         });
       }
+      const password = body.password;
+      const saltRounds = 10;
+      const salt = bycript.genSaltSync(saltRounds);
+      const hashedPassword = bycript.hashSync(password, salt);
       const id = uuidv4();
-      const table = await this.knex(' post ').insert({
+      const data = {
         id,
         name: body.name,
         lastName: body.lastName,
         email: body.email,
-        password: body.password,
+        password: hashedPassword,
         gender: body.gender,
         birthDate: body.birthDate,
-      });
+      };
+      const table = await this.knex(' post ').insert(data);
       Logger.log(table);
       return response.status(HttpStatus.CREATED).send({ table });
     } catch (ex) {
-      Logger.error(ex.message);
       return response
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send({ error: 'Server error' });
+        .send({ error: ex.message });
     }
   }
 }
